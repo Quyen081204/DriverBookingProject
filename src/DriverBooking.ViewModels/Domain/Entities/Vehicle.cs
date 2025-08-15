@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DriverBooking.Core.Domain.Entities
 {
-    public enum VehicleType { LUXURY, NORMAL }
+    public enum VehicleType { SAME ,LUXURY, NORMAL,  }
     [Table("Vehicles")]
     [Index(nameof(LicensePlate), IsUnique = true)] 
     [Index(nameof(DriverId), IsUnique =true)]
@@ -28,11 +28,8 @@ namespace DriverBooking.Core.Domain.Entities
         // FK
         public int DriverId { get; set; }
         public int OpeningFeeId { get; set; }
-        public int StageFeeId { get; set; }
-
-        public required Driver Driver { get; set; }
-        public required OpeningFee OpeningFee { get; set; }
-        public required StageFee StageFee { get; set; }
-
+        public  Driver Driver { get; set; }
+        public  OpeningFee OpeningFee { get; set; }
+        public  List<StageFee> StageFees { get; set; }
     }
 }

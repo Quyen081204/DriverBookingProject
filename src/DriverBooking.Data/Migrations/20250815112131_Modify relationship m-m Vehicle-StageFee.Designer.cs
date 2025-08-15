@@ -3,6 +3,7 @@ using System;
 using DriverBooking.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DriverBooking.Data.Migrations
 {
     [DbContext(typeof(DriverBookingContext))]
-    partial class DriverBookingContextModelSnapshot : ModelSnapshot
+    [Migration("20250815112131_Modify relationship m-m Vehicle-StageFee")]
+    partial class ModifyrelationshipmmVehicleStageFee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,6 +324,9 @@ namespace DriverBooking.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<int>("OpeningFeeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StageFeeId")
                         .HasColumnType("integer");
 
                     b.Property<int>("VehicleCapacity")

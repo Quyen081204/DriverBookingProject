@@ -31,6 +31,8 @@ namespace DriverBooking.Data
             builder.Entity<AppUser>()
                 .HasIndex(u => u.PhoneNumber)
                 .IsUnique();
+            builder.Entity<AppUser>().Property(e => e.CreatedAt)
+                .HasDefaultValueSql("NOW()");
 
             // Customer 
             builder.Entity<Customer>(entity =>
@@ -58,7 +60,6 @@ namespace DriverBooking.Data
                       .HasForeignKey<Driver>(e => e.DriverAccountId);
             });
 
-
             // Vehicle 
             builder.Entity<Vehicle>(entity =>
             {
@@ -67,14 +68,14 @@ namespace DriverBooking.Data
                       .WithOne(e => e.Vehicle)
                       .HasForeignKey<Vehicle>(e => e.DriverId);
 
-                // Opening Fee, StageFee
+                // Opening Fee
                 entity.HasOne(e => e.OpeningFee)
                       .WithMany()
                       .HasForeignKey(e => e.OpeningFeeId);
 
-                entity.HasOne(e => e.StageFee)
-                      .WithMany()
-                      .HasForeignKey(e => e.StageFeeId);
+                // Many to many with StageFees
+                entity.HasMany(e => e.StageFees)
+                      .WithMany();
             });
 
             // Trip 

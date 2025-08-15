@@ -1,4 +1,5 @@
 
+using DriverBooking.API;
 using DriverBooking.Core.Domain.Identity;
 using DriverBooking.Data;
 using Microsoft.AspNetCore.Identity;
@@ -69,6 +70,9 @@ namespace DriverBooking.BackendServer
 
 
             app.MapControllers();
+
+            //Seeding data
+            app.MigrateDatabase();
 
             app.Run();
         }

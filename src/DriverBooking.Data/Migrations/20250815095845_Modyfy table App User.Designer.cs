@@ -3,6 +3,7 @@ using System;
 using DriverBooking.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DriverBooking.Data.Migrations
 {
     [DbContext(typeof(DriverBookingContext))]
-    partial class DriverBookingContextModelSnapshot : ModelSnapshot
+    [Migration("20250815095845_Modyfy table App User")]
+    partial class ModyfytableAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -323,6 +326,9 @@ namespace DriverBooking.Data.Migrations
                     b.Property<int>("OpeningFeeId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("StageFeeId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("VehicleCapacity")
                         .HasColumnType("integer");
 
@@ -338,6 +344,8 @@ namespace DriverBooking.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("OpeningFeeId");
+
+                    b.HasIndex("StageFeeId");
 
                     b.ToTable("Vehicles");
                 });
@@ -538,21 +546,6 @@ namespace DriverBooking.Data.Migrations
                     b.ToTable("AppUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("StageFeeVehicle", b =>
-                {
-                    b.Property<int>("StageFeesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("StageFeesId", "VehicleId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("StageFeeVehicle");
-                });
-
             modelBuilder.Entity("DriverBooking.Core.Domain.Entities.Customer", b =>
                 {
                     b.HasOne("DriverBooking.Core.Domain.Identity.AppUser", "CustomerAccount")
@@ -617,24 +610,17 @@ namespace DriverBooking.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DriverBooking.Core.Domain.Entities.StageFee", "StageFee")
+                        .WithMany()
+                        .HasForeignKey("StageFeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Driver");
 
                     b.Navigation("OpeningFee");
-                });
 
-            modelBuilder.Entity("StageFeeVehicle", b =>
-                {
-                    b.HasOne("DriverBooking.Core.Domain.Entities.StageFee", null)
-                        .WithMany()
-                        .HasForeignKey("StageFeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DriverBooking.Core.Domain.Entities.Vehicle", null)
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("StageFee");
                 });
 
             modelBuilder.Entity("DriverBooking.Core.Domain.Entities.Driver", b =>
