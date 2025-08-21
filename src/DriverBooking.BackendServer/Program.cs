@@ -1,10 +1,15 @@
 
 using DriverBooking.API;
+using DriverBooking.API.Services;
+using DriverBooking.Core.ConfigOptions;
 using DriverBooking.Core.Domain.Identity;
+using DriverBooking.Core.Models.Content;
+using DriverBooking.Core.Repositories;
+using DriverBooking.Core.SeedWorks;
 using DriverBooking.Data;
+using DriverBooking.Data.SeedWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace DriverBooking.BackendServer
 {
@@ -48,13 +53,26 @@ namespace DriverBooking.BackendServer
                 options.User.RequireUniqueEmail = true;
             });
 
+            // Register the UnitOfWork and Repositories
+            builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ITripRepository, TripRepository>();
+
+            // Register automapper
+            builder.Services.AddAutoMapper(typeof(DriverInListDTO).Assembly);
+            // Authentication and Authorization
+            builder.Services.Configure<JwtTokenSettings>(builder.Configuration.GetSection("JwtTokenSettings"));
+            builder.Services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
+            builder.Services.AddScoped<SignInManager<AppUser>, SignInManager<AppUser>>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
 
             // Default configure services for ASP.NET Core applications 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

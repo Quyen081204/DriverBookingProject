@@ -19,14 +19,14 @@ namespace DriverBooking.Data
 
             var passwordHasher = new PasswordHasher<AppUser>();
 
-            var adminRoleGuid = Guid.NewGuid();
-            var customerRoleGuid = Guid.NewGuid();
-            var driverRoleGuid = Guid.NewGuid();
-            var staffRoleGuid = Guid.NewGuid();
-
             // Create roles and account users if they do not exist
             if (!_context.Roles.Any())
             {
+                var adminRoleGuid = Guid.NewGuid();
+                var customerRoleGuid = Guid.NewGuid();
+                var driverRoleGuid = Guid.NewGuid();
+                var staffRoleGuid = Guid.NewGuid();
+
                 var adminRole = new AppRole
                 {
                     Id = adminRoleGuid,
@@ -39,7 +39,7 @@ namespace DriverBooking.Data
                 {
                     Id = customerRoleGuid,
                     Name = "Customer",
-                    NormalizedName = "Customer",
+                    NormalizedName = "CUSTOMER",
                     DisplayName = "Customer"
                 };
 
@@ -142,11 +142,11 @@ namespace DriverBooking.Data
 
                 // Assign roles to users
                 await _context.UserRoles.AddRangeAsync(
-                    new IdentityUserRole<Guid> { UserId = adminId, RoleId = adminRoleGuid },
-                    new IdentityUserRole<Guid> { UserId = customerId, RoleId = customerRoleGuid },
-                    new IdentityUserRole<Guid> { UserId = driver1Id, RoleId = driverRoleGuid },
-                    new IdentityUserRole<Guid> { UserId = driver2Id, RoleId = driverRoleGuid },
-                    new IdentityUserRole<Guid> { UserId = driver3Id, RoleId = driverRoleGuid }
+                    new IdentityUserRole<Guid> { UserId = adminId, RoleId = _context.Roles.Where(r => r.NormalizedName == "ADMIN").First().Id },
+                    new IdentityUserRole<Guid> { UserId = customerId, RoleId = _context.Roles.Where(r => r.NormalizedName == "CUSTOMER").First().Id },
+                    new IdentityUserRole<Guid> { UserId = driver1Id, RoleId = _context.Roles.Where(r => r.NormalizedName == "DRIVER").First().Id },
+                    new IdentityUserRole<Guid> { UserId = driver2Id, RoleId = _context.Roles.Where(r => r.NormalizedName == "DRIVER").First().Id },
+                    new IdentityUserRole<Guid> { UserId = driver3Id, RoleId = _context.Roles.Where(r => r.NormalizedName == "DRIVER").First().Id }
                 );
 
                 await _context.SaveChangesAsync();
@@ -384,4 +384,6 @@ namespace DriverBooking.Data
         }
     }
 }
-// Next migrate to database with this seeder
+// Next migrate to database with this seeder - Done
+
+// Build API to register, login , logout , JWT ...
