@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DriverBooking.Core.Domain.Entities;
+﻿using DriverBooking.Core.Domain.Entities;
 using DriverBooking.Core.Models;
+using DriverBooking.Core.Models.Booking;
 using DriverBooking.Core.SeedWorks;
+using NetTopologySuite.Geometries;
 
 namespace DriverBooking.Core.Repositories
 {
     public interface IDriverRepository : IRepository<Driver,int>
     {
-        public Task<PageResult<Driver>> GetFreeDriverAsync(int pageIndex, int pageSize);
+        public Task<IEnumerable<AvailableDriverLocation>> GetLocationFreeDriversWithinMetersAsync(double customer_lat, double customer_lon,float withinM);
     }
 }

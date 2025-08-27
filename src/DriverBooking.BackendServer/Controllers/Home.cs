@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DriverBooking.API.Controllers
@@ -7,5 +8,11 @@ namespace DriverBooking.API.Controllers
     [ApiController]
     public class Home : ControllerBase
     {
+        [HttpGet("Home")]
+        [Authorize(Roles ="Admin,Customer")]
+        public IActionResult Index()
+        {
+            return Ok("Welcome to Driver Booking API");
+        }
     }
 }

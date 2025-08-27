@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace DriverBooking.API.Services
+namespace DriverBooking.API.Services.TokenServices.Interface
 {
     public interface ITokenService
     {

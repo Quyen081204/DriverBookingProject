@@ -1,6 +1,10 @@
 
+using System.Text;
 using DriverBooking.API;
-using DriverBooking.API.Services;
+using DriverBooking.API.Services.BookingServices;
+using DriverBooking.API.Services.BookingServices.Interface;
+using DriverBooking.API.Services.TokenServices;
+using DriverBooking.API.Services.TokenServices.Interface;
 using DriverBooking.Core.ConfigOptions;
 using DriverBooking.Core.Domain.Identity;
 using DriverBooking.Core.Models.Content;
@@ -8,8 +12,10 @@ using DriverBooking.Core.Repositories;
 using DriverBooking.Core.SeedWorks;
 using DriverBooking.Data;
 using DriverBooking.Data.SeedWorks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DriverBooking.BackendServer
 {
@@ -53,10 +59,23 @@ namespace DriverBooking.BackendServer
                 options.User.RequireUniqueEmail = true;
             });
 
+            // Register HttpClient in DI
+            builder.Services.AddHttpClient("GoongClient", client =>
+            {
+                var host = builder.Configuration.GetValue<string>("GoongAPI:host");
+
+                client.BaseAddress = new Uri(host);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+
             // Register the UnitOfWork and Repositories
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ITripRepository, TripRepository>();
+            builder.Services.AddScoped<IDriverRepository, DriverRepository>();
+
+            // Register other services
+            builder.Services.AddScoped<IBookingService, BookingService>();
 
             // Register automapper
             builder.Services.AddAutoMapper(typeof(DriverInListDTO).Assembly);
@@ -66,6 +85,23 @@ namespace DriverBooking.BackendServer
             builder.Services.AddScoped<SignInManager<AppUser>, SignInManager<AppUser>>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                // config to validate the token
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = builder.Configuration["JwtTokenSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtTokenSettings:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtTokenSettings:Key"]))
+                };
+            });
 
             // Default configure services for ASP.NET Core applications 
             builder.Services.AddControllers();
@@ -83,9 +119,8 @@ namespace DriverBooking.BackendServer
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

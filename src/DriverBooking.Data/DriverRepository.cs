@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using DriverBooking.Core.Domain.Entities;
-using DriverBooking.Core.Models;
+using DriverBooking.Core.Models.Booking;
 using DriverBooking.Core.Repositories;
 using DriverBooking.Data.SeedWorks;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace DriverBooking.Data
 {
@@ -14,24 +16,33 @@ namespace DriverBooking.Data
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        public async Task<PageResult<Driver>> GetFreeDriverAsync(int pageIndex, int pageSize)
+        public async Task<IEnumerable<AvailableDriverLocation>> GetLocationFreeDriversWithinMetersAsync(double lat, double lon,float withinM)
         {
-            var query = _context.Drivers.AsQueryable();
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            var customerLocation = geometryFactory.CreatePoint(new Coordinate(lon, lat));
 
-            query = query.Where(d => d.DriverStatus == DriverStatus.ON)
-                         .OrderBy(d => d.Id)
-                         .Skip((pageIndex -1) * pageSize)
-                         .Take(pageSize);
+            var freeDrivers = await _context.Drivers
+                .Where(d => d.DriverAccount.IsActive
+                            && d.DriverStatus == DriverStatus.ON
+                            && d.CurrentLocation != null
+                            && EF.Functions.IsWithinDistance(d.CurrentLocation, customerLocation, withinM, true))
+                .Select(d => new AvailableDriverLocation
+                {
+                    DriverId = d.Id,
+                    CurrentLocation = new Core.Models.Common.PointDTO
+                    {
+                        Lat = d.CurrentLocation.Coordinate.Y,
+                        Lon = d.CurrentLocation.Coordinate.X
+                    },
+                    Distance = EF.Functions.Distance(customerLocation, d.CurrentLocation, true)
+                }).ToListAsync();
 
-            var totalCount = await query.CountAsync();
-
-            return new PageResult<Driver>
+            if (freeDrivers.Count > 10)
             {
-                Results = await query.ToListAsync(),
-                RowCount = totalCount,
-                CurrentPage = pageIndex,
-                PageSize = pageSize
-            };
+                freeDrivers = freeDrivers.Take(10).ToList();
+            }
+
+            return freeDrivers;
         }
     }
 }

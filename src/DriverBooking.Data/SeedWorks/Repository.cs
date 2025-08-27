@@ -27,6 +27,7 @@ namespace DriverBooking.Data.SeedWorks
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
         {
+            // use translator to DECIDE HOW we want the query to be executed
             return _dbSet.Where(expression);
         }
 

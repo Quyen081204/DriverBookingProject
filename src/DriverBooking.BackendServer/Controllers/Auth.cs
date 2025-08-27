@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using DriverBooking.API.Services;
+using DriverBooking.API.Services.TokenServices.Interface;
 using DriverBooking.Core.Domain.Identity;
 using DriverBooking.Core.Models.Auth;
 using DriverBooking.Core.SeedWorks.Constants;

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DriverBooking.Core.Domain.Entities;
+using DriverBooking.Core.Repositories;
 
 namespace DriverBooking.Core.SeedWorks
 {
     public interface IUnitOfWork
     {
+        IRepository<OpeningFee, int> _openingFeeRepository { get; }
+        IRepository<StageFee, int> _stageFeeRepository { get; }
+        IDriverRepository _driverRepository { get; }  
         Task<int> CompleteAsync();
     }
 }

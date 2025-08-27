@@ -30,4 +30,8 @@
     <ProjectReference Include="..\DriverBooking.ViewModels\DriverBooking.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

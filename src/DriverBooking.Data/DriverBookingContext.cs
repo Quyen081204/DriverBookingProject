@@ -50,6 +50,7 @@ namespace DriverBooking.Data
                 entity.Property(e => e.DateOfBirth).HasDefaultValueSql("NOW()");    
                 entity.Property(e => e.DriverStatus).HasDefaultValue(DriverStatus.OFF);
                 entity.Property(e => e.CurrentLocation).HasColumnType("geography (point, 4326)");
+                entity.HasIndex(e => e.CurrentLocation).HasMethod("GIST");  
                 entity.Property(e => e.TripCount).HasDefaultValue(0);
                 entity.Property(e => e.RatingCount).HasDefaultValue(0);
                 entity.HasIndex(e => e.PhoneNumber).IsUnique(true);

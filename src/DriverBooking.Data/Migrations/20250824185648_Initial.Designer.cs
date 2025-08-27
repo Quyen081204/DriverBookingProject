@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DriverBooking.Data.Migrations
 {
     [DbContext(typeof(DriverBookingContext))]
-    [Migration("20250815081912_Initial")]
+    [Migration("20250824185648_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -127,6 +127,10 @@ namespace DriverBooking.Data.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrentLocation");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CurrentLocation"), "GIST");
 
                     b.HasIndex("DriverAccountId")
                         .IsUnique();
@@ -326,9 +330,6 @@ namespace DriverBooking.Data.Migrations
                     b.Property<int>("OpeningFeeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StageFeeId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("VehicleCapacity")
                         .HasColumnType("integer");
 
@@ -344,8 +345,6 @@ namespace DriverBooking.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("OpeningFeeId");
-
-                    b.HasIndex("StageFeeId");
 
                     b.ToTable("Vehicles");
                 });
@@ -386,6 +385,11 @@ namespace DriverBooking.Data.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -541,6 +545,21 @@ namespace DriverBooking.Data.Migrations
                     b.ToTable("AppUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StageFeeVehicle", b =>
+                {
+                    b.Property<int>("StageFeesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("StageFeesId", "VehicleId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("StageFeeVehicle");
+                });
+
             modelBuilder.Entity("DriverBooking.Core.Domain.Entities.Customer", b =>
                 {
                     b.HasOne("DriverBooking.Core.Domain.Identity.AppUser", "CustomerAccount")
@@ -605,17 +624,24 @@ namespace DriverBooking.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DriverBooking.Core.Domain.Entities.StageFee", "StageFee")
-                        .WithMany()
-                        .HasForeignKey("StageFeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Driver");
 
                     b.Navigation("OpeningFee");
+                });
 
-                    b.Navigation("StageFee");
+            modelBuilder.Entity("StageFeeVehicle", b =>
+                {
+                    b.HasOne("DriverBooking.Core.Domain.Entities.StageFee", null)
+                        .WithMany()
+                        .HasForeignKey("StageFeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DriverBooking.Core.Domain.Entities.Vehicle", null)
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DriverBooking.Core.Domain.Entities.Driver", b =>

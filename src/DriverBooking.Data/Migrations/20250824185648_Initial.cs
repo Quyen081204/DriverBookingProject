@@ -95,6 +95,7 @@ namespace DriverBooking.Data.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
                     UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -266,8 +267,7 @@ namespace DriverBooking.Data.Migrations
                     Model = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LicensePlate = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     DriverId = table.Column<int>(type: "integer", nullable: false),
-                    OpeningFeeId = table.Column<int>(type: "integer", nullable: false),
-                    StageFeeId = table.Column<int>(type: "integer", nullable: false)
+                    OpeningFeeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -282,12 +282,6 @@ namespace DriverBooking.Data.Migrations
                         name: "FK_Vehicles_OpeningFees_OpeningFeeId",
                         column: x => x.OpeningFeeId,
                         principalTable: "OpeningFees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Vehicles_StageFees_StageFeeId",
-                        column: x => x.StageFeeId,
-                        principalTable: "StageFees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -313,6 +307,30 @@ namespace DriverBooking.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StageFeeVehicle",
+                columns: table => new
+                {
+                    StageFeesId = table.Column<int>(type: "integer", nullable: false),
+                    VehicleId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StageFeeVehicle", x => new { x.StageFeesId, x.VehicleId });
+                    table.ForeignKey(
+                        name: "FK_StageFeeVehicle_StageFees_StageFeesId",
+                        column: x => x.StageFeesId,
+                        principalTable: "StageFees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StageFeeVehicle_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AppUsers_PhoneNumber",
                 table: "AppUsers",
@@ -332,6 +350,12 @@ namespace DriverBooking.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Drivers_CurrentLocation",
+                table: "Drivers",
+                column: "CurrentLocation")
+                .Annotation("Npgsql:IndexMethod", "GIST");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Drivers_DriverAccountId",
                 table: "Drivers",
                 column: "DriverAccountId",
@@ -342,6 +366,11 @@ namespace DriverBooking.Data.Migrations
                 table: "Drivers",
                 column: "PhoneNumber",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StageFeeVehicle_VehicleId",
+                table: "StageFeeVehicle",
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TripPoints_TripId",
@@ -374,11 +403,6 @@ namespace DriverBooking.Data.Migrations
                 name: "IX_Vehicles_OpeningFeeId",
                 table: "Vehicles",
                 column: "OpeningFeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_StageFeeId",
-                table: "Vehicles",
-                column: "StageFeeId");
         }
 
         /// <inheritdoc />
@@ -403,7 +427,13 @@ namespace DriverBooking.Data.Migrations
                 name: "AppUserTokens");
 
             migrationBuilder.DropTable(
+                name: "StageFeeVehicle");
+
+            migrationBuilder.DropTable(
                 name: "TripPoints");
+
+            migrationBuilder.DropTable(
+                name: "StageFees");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
@@ -413,9 +443,6 @@ namespace DriverBooking.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OpeningFees");
-
-            migrationBuilder.DropTable(
-                name: "StageFees");
 
             migrationBuilder.DropTable(
                 name: "Customers");

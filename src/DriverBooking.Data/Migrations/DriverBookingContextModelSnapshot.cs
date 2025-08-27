@@ -125,6 +125,10 @@ namespace DriverBooking.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CurrentLocation");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("CurrentLocation"), "GIST");
+
                     b.HasIndex("DriverAccountId")
                         .IsUnique();
 

@@ -2,11 +2,12 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using DriverBooking.API.Services.TokenServices.Interface;
 using DriverBooking.Core.ConfigOptions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DriverBooking.API.Services
+namespace DriverBooking.API.Services.TokenServices
 {
     public class TokenService : ITokenService
     {
@@ -24,7 +25,7 @@ namespace DriverBooking.API.Services
                 issuer: _jwtTokenSettings.Issuer,
                 audience: _jwtTokenSettings.Issuer,
                 claims: claims,
-                expires: DateTime.Now.AddHours(_jwtTokenSettings.ExpireInHours),
+                expires: DateTime.UtcNow.AddHours(_jwtTokenSettings.ExpireInHours),
                 signingCredentials: signinCredentials
             );
 
