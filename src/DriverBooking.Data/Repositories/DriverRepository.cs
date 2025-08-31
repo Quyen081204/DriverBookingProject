@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
-namespace DriverBooking.Data
+namespace DriverBooking.Data.Repositories
 {
     public class DriverRepository : Repository<Driver, int>, IDriverRepository
     {
@@ -16,6 +16,13 @@ namespace DriverBooking.Data
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
+
+        public Task<Driver?> GetDriverByAccountId(Guid driverAccId)
+        {
+            var driver = _context.Drivers.SingleOrDefaultAsync(d => d.DriverAccountId == driverAccId);
+            return driver;
+        }
+
         public async Task<IEnumerable<AvailableDriverLocation>> GetLocationFreeDriversWithinMetersAsync(double lat, double lon,float withinM)
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);

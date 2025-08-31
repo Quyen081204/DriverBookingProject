@@ -8,6 +8,8 @@ namespace DriverBooking.Core.SeedWorks
         IRepository<OpeningFee, int> _openingFeeRepository { get; }
         IRepository<StageFee, int> _stageFeeRepository { get; }
         IDriverRepository _driverRepository { get; }  
+
+        ICustomerRepository _customerRepository { get; }
         Task<int> CompleteAsync();
     }
 }

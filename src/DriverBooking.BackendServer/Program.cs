@@ -3,14 +3,17 @@ using System.Text;
 using DriverBooking.API;
 using DriverBooking.API.Services.BookingServices;
 using DriverBooking.API.Services.BookingServices.Interface;
+using DriverBooking.API.Services.CustomerServices;
 using DriverBooking.API.Services.TokenServices;
 using DriverBooking.API.Services.TokenServices.Interface;
+using DriverBooking.API.Services.UploadServices;
 using DriverBooking.Core.ConfigOptions;
 using DriverBooking.Core.Domain.Identity;
 using DriverBooking.Core.Models.Content;
 using DriverBooking.Core.Repositories;
 using DriverBooking.Core.SeedWorks;
 using DriverBooking.Data;
+using DriverBooking.Data.Repositories;
 using DriverBooking.Data.SeedWorks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -42,8 +45,8 @@ namespace DriverBooking.BackendServer
             {
                 // Password settings.
                 options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 0;
@@ -56,8 +59,11 @@ namespace DriverBooking.BackendServer
                 // User settings.
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = false;
             });
+
+            // Register CloudinarySettings config
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
             // Register HttpClient in DI
             builder.Services.AddHttpClient("GoongClient", client =>
@@ -73,9 +79,12 @@ namespace DriverBooking.BackendServer
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ITripRepository, TripRepository>();
             builder.Services.AddScoped<IDriverRepository, DriverRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             // Register other services
             builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IUploadService, CloudinaryUploadService>();
+            builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 
             // Register automapper
             builder.Services.AddAutoMapper(typeof(DriverInListDTO).Assembly);

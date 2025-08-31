@@ -33,6 +33,7 @@ namespace DriverBooking.Data
                 .IsUnique();
             builder.Entity<AppUser>().Property(e => e.CreatedAt)
                 .HasDefaultValueSql("NOW()");
+            builder.Entity<AppUser>().Property(e => e.IsActive).HasDefaultValue(true);
 
             // Customer 
             builder.Entity<Customer>(entity =>

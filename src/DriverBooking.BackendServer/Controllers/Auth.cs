@@ -3,6 +3,7 @@ using System.Security.Claims;
 using DriverBooking.API.Services.TokenServices.Interface;
 using DriverBooking.Core.Domain.Identity;
 using DriverBooking.Core.Models.Auth;
+using DriverBooking.Core.SeedWorks;
 using DriverBooking.Core.SeedWorks.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,14 +18,17 @@ namespace DriverBooking.API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly ITokenService _tokenService;   
+        private readonly ITokenService _tokenService;
+        private readonly IUnitOfWork _unitOfWork;
         public AuthController(UserManager<AppUser> userManager, 
                               SignInManager<AppUser> signInManager,
-                              ITokenService tokenService)
+                              ITokenService tokenService,
+                              IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _unitOfWork = unitOfWork;
         }
         // Add your authentication methods here, e.g., Register, Login, etc.
 
@@ -52,11 +56,28 @@ namespace DriverBooking.API.Controllers
            
             // Authorization
             var roles = await _userManager.GetRolesAsync(user);
-            // claim of principal
-            var claims = new List<Claim>
+            // Profile of user (can be customer or driver)
+            string profileId = string.Empty;
+            // Role == Customer
+            if (roles.Contains("Customer"))
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(UserClaims.Id, user.Id.ToString()),
+                var customer = await _unitOfWork._customerRepository.GetCustomerByAccountId(user.Id);
+                if (customer != null)
+                    profileId = customer.Id.ToString();
+            }
+            else if (roles.Contains("Driver"))
+            {
+                var driver = await _unitOfWork._driverRepository.GetDriverByAccountId(user.Id);
+                if (driver != null)
+                    profileId = driver.Id.ToString();
+            }
+
+
+                // claim of principal
+                var claims = new List<Claim>
+            {
+                new Claim("accountId", user.Id.ToString()),
+                new Claim("profileId", profileId),
                 new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(UserClaims.Roles, string.Join(";", roles)),

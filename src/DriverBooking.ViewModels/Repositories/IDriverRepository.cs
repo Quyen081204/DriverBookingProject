@@ -8,6 +8,8 @@ namespace DriverBooking.Core.Repositories
 {
     public interface IDriverRepository : IRepository<Driver,int>
     {
-        public Task<IEnumerable<AvailableDriverLocation>> GetLocationFreeDriversWithinMetersAsync(double customer_lat, double customer_lon,float withinM);
+        Task<IEnumerable<AvailableDriverLocation>> GetLocationFreeDriversWithinMetersAsync(double customer_lat, double customer_lon,float withinM);
+
+        Task<Driver?> GetDriverByAccountId(Guid driverAccId);
     }
 }

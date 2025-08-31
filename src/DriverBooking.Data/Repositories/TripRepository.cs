@@ -8,7 +8,7 @@ using DriverBooking.Core.Repositories;
 using DriverBooking.Data.SeedWorks;
 using Microsoft.EntityFrameworkCore;
 
-namespace DriverBooking.Data
+namespace DriverBooking.Data.Repositories
 {
     public class TripRepository : Repository<Trip, Guid>, ITripRepository
     {
