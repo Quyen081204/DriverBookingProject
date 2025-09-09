@@ -65,6 +65,8 @@ namespace DriverBooking.Data
             // Vehicle 
             builder.Entity<Vehicle>(entity =>
             {
+                entity.HasIndex(e => e.LicensePlate).IsUnique(true);
+
                 // Relationship with driver 
                 entity.HasOne(e => e.Driver)
                       .WithOne(e => e.Vehicle)

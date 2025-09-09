@@ -76,7 +76,7 @@ namespace DriverBooking.API.Services.CustomerServices
             {
                 new Claim("accountId", appUser.Id.ToString()),
                 new Claim("profileId", customerEntity.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, appUser.UserName),
+                new Claim(ClaimTypes.NameIdentifier, appUser.Id.ToString()),
                 new Claim(ClaimTypes.Name, appUser.UserName),
                 new Claim(UserClaims.Roles, string.Join(";", roles)),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

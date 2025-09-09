@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DriverBooking.Core.Domain.Entities;
+﻿using DriverBooking.Core.Domain.Entities;
 using DriverBooking.Core.Repositories;
 using DriverBooking.Data.SeedWorks;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +22,25 @@ namespace DriverBooking.Data.Repositories
             return await _context.Trips
                 .Where(t => t.CustomerId == passengerId)
                 .ToListAsync();
+        }
+
+        public async Task UpdateTrip(Guid id, Trip trip)
+        {
+            if (id != trip.Id)
+                throw new ArgumentException("Id mismatch");
+
+            _context.Trips.Update(trip);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ReloadTripAsync(Trip trip)
+        {
+            await _context.Entry(trip).ReloadAsync();
+        }
+
+        public Task<Trip?> GetTripById(Guid id)
+        {
+            return _context.Trips.SingleOrDefaultAsync(t => t.Id == id);
         }
     }
 }

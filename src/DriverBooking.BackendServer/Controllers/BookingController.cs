@@ -32,6 +32,15 @@ namespace DriverBooking.API.Controllers
 
             return Ok(response);
         }
+
+        // wring service process booking
+        [HttpPost("booking")]
+        [Authorize(Roles ="Customer")]
+        public async Task<ActionResult<ApiResponse<TripDTO>>> ProcessBooking(CustomerBookingRequest customerBookingRequest)
+        {
+            var respose = await _bookingService.ProcessBooking(customerBookingRequest);
+            return Ok(respose);
+        }
     }
 }
 // Today: make BookingService, Use unit of work pattern

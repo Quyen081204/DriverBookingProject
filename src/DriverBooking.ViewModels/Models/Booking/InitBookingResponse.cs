@@ -23,6 +23,7 @@ namespace DriverBooking.Core.Models.Booking
     public class AvailableDriverLocation
     {
         public int DriverId { get; set; }
+        public string DriverUserName { get; set; }
         public PointDTO CurrentLocation { get; set; }
         public double Distance { get; set; } // in km
     }

@@ -1,12 +1,43 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
 namespace DriverBooking.Core.Domain.Entities
 {
-    public enum TripStatus { PICKINGUP, ARRIVED, ONTRIP, ENDTRIP }
-    public enum TripRequestStatus { PENDING, CONFIRMED, CANCELED }
-    public enum DistanceUnit { KM, M }
+    public enum TripStatus
+    {
+        [Description("PICKING UP")]
+        PICKINGUP,
+
+        [Description("DRVIER ARRIVED")]
+        ARRIVED,
+
+        [Description("ON TRIP")]
+        ONTRIP,
+
+        [Description("END TRIP")]
+        ENDTRIP
+    }
+    public enum TripRequestStatus {
+        [Description("PENDING TRIP")]
+        PENDING,
+
+        [Description("FOUND DRIVER")]
+        CONFIRMED,
+
+        [Description("CANCELED")]
+        CANCELED,
+
+        [Description("NO DRIVER AVAILABLE")]
+        NOTFOUNDDRIVER
+    }
+    public enum DistanceUnit {
+        [Description("KM")]
+        KM,
+        [Description("M")]
+        M }
+
     [Table("Trips")]
     public class Trip
     {
@@ -14,7 +45,7 @@ namespace DriverBooking.Core.Domain.Entities
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public TripStatus? Status { get; set; }
-        public required TripRequestStatus RequestStatus { get; set; }
+        public TripRequestStatus RequestStatus { get; set; }
         public double Price { get; set; }
         public required string PaymentMethod { get; set; }
         public Point? CurrentLocation { get; set; }
@@ -46,7 +77,7 @@ namespace DriverBooking.Core.Domain.Entities
         public required int CustomerId { get; set; }
         public int? DriverId { get; set; }
 
-        public required Customer Customer { get; set; }
+        public Customer Customer { get; set; }
 
         public Driver? Driver { get; set; } 
     }

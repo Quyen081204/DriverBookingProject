@@ -22,5 +22,11 @@ namespace DriverBooking.Core.Repositories
         /// <param name="passengerId">The ID of the passenger.</param>
         /// <returns>A collection of trips associated with the specified passenger.</returns>
         Task<IEnumerable<Trip>> GetTripsByPassengerIdAsync(int passengerId);
+
+        Task UpdateTrip(Guid id,  Trip trip); 
+
+        Task ReloadTripAsync(Trip trip);
+
+        Task<Trip?> GetTripById(Guid id);
     }
 }

@@ -4,12 +4,13 @@ using DriverBooking.API;
 using DriverBooking.API.Services.BookingServices;
 using DriverBooking.API.Services.BookingServices.Interface;
 using DriverBooking.API.Services.CustomerServices;
+using DriverBooking.API.Services.DriverServices;
 using DriverBooking.API.Services.TokenServices;
 using DriverBooking.API.Services.TokenServices.Interface;
 using DriverBooking.API.Services.UploadServices;
 using DriverBooking.Core.ConfigOptions;
 using DriverBooking.Core.Domain.Identity;
-using DriverBooking.Core.Models.Content;
+using DriverBooking.Core.HubConfigs;
 using DriverBooking.Core.Repositories;
 using DriverBooking.Core.SeedWorks;
 using DriverBooking.Data;
@@ -85,15 +86,23 @@ namespace DriverBooking.BackendServer
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IUploadService, CloudinaryUploadService>();
             builder.Services.AddScoped<ICustomerServices, CustomerServices>();
+            builder.Services.AddScoped<IDriverServices, DriverServices>();
+            builder.Services.AddSingleton<PendingResponseClient>();
+            builder.Services.AddSingleton<ConnectionMapping<string>>();
+            builder.Services.AddSingleton<ManageCancellationToken>();
+            builder.Services.AddHttpContextAccessor();
 
             // Register automapper
-            builder.Services.AddAutoMapper(typeof(DriverInListDTO).Assembly);
+            // builder.Services.AddAutoMapper(typeof(DriverInListDTO).Assembly);
             // Authentication and Authorization
             builder.Services.Configure<JwtTokenSettings>(builder.Configuration.GetSection("JwtTokenSettings"));
             builder.Services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
             builder.Services.AddScoped<SignInManager<AppUser>, SignInManager<AppUser>>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
+
+            // Add SignalR service
+
 
             builder.Services.AddAuthentication(o =>
             {
@@ -110,6 +119,47 @@ namespace DriverBooking.BackendServer
                     ValidAudience = builder.Configuration["JwtTokenSettings:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtTokenSettings:Key"]))
                 };
+
+                // authentication for SignalR
+                cfg.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/bookingHub")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            builder.Services.AddSignalR(hubOptions =>
+            {
+                hubOptions.MaximumParallelInvocationsPerClient = 5; // Allow up to 5 concurrent invocations per client
+            }); ;
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(5014);//HTTP
+                options.ListenAnyIP(7283, o => o.UseHttps()); // HTTPS if needed
+            });
+
+
+            // Add CORS for signalR purpose
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+                    //.AllowCredentials());
             });
 
             // Default configure services for ASP.NET Core applications 
@@ -127,6 +177,7 @@ namespace DriverBooking.BackendServer
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -136,6 +187,7 @@ namespace DriverBooking.BackendServer
             //Seeding data
             app.MigrateDatabase();
 
+            app.MapHub<BookingHub>("/bookingHub");
             app.Run();
         }
     }

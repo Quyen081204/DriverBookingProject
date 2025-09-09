@@ -1,10 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace DriverBooking.Core.Domain.Entities
 {
-    public enum VehicleType { SAME ,LUXURY, NORMAL,  }
+    public enum VehicleType {
+        [Description("SAME")]
+        SAME ,
+        [Description("LUXURY")]
+        LUXURY,
+        [Description("NORMAL")]
+        NORMAL,  }
+
     [Table("Vehicles")]
     [Index(nameof(LicensePlate), IsUnique = true)] 
     [Index(nameof(DriverId), IsUnique =true)]

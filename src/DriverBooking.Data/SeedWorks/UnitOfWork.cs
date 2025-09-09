@@ -17,18 +17,21 @@ namespace DriverBooking.Data.SeedWorks
         public IRepository<StageFee, int> _stageFeeRepository { get; }
         public IDriverRepository _driverRepository { get; }
         public ICustomerRepository _customerRepository { get; }
+        public ITripRepository _tripRepository { get; }
 
         public UnitOfWork(DriverBookingContext context, 
                           IRepository<OpeningFee, int> openingFeeRepository,
                           IRepository<StageFee, int> stageFeeRepository,
                           IDriverRepository driverRepository,
-                          ICustomerRepository customerRepository)
+                          ICustomerRepository customerRepository,
+                          ITripRepository tripRepository)
         {
             _context = context;
             _openingFeeRepository = openingFeeRepository;
             _stageFeeRepository = stageFeeRepository;
             _driverRepository = driverRepository;
             _customerRepository = customerRepository;
+            _tripRepository = tripRepository;
         }
         public async Task<int> CompleteAsync()
         {

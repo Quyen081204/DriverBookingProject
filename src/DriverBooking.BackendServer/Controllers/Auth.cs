@@ -78,7 +78,7 @@ namespace DriverBooking.API.Controllers
             {
                 new Claim("accountId", user.Id.ToString()),
                 new Claim("profileId", profileId),
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(UserClaims.Roles, string.Join(";", roles)),
                 //new Claim(UserClaims.Permissions, JsonSerializer.Serialize(permissions)),
