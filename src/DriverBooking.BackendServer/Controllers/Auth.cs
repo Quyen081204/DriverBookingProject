@@ -93,6 +93,7 @@ namespace DriverBooking.API.Controllers
             await _userManager.UpdateAsync(user);   
 
             return Ok(new AuthenticatedResult {
+                AccountId = user.Id,
                 Token = accessToken,
                 RefreshToken = refreshToken
             });

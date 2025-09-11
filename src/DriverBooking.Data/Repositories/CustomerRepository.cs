@@ -20,7 +20,7 @@ namespace DriverBooking.Data.Repositories
 
         public Task<Customer?> GetCustomerByAccountId(Guid customerAccId)
         {
-            var customer = _context.Customers.SingleOrDefaultAsync(c => c.CustomerAccountId == customerAccId);
+            var customer = _context.Customers.Include(c => c.CustomerAccount).SingleOrDefaultAsync(c => c.CustomerAccountId == customerAccId);
             return customer;
         }
 

@@ -39,6 +39,7 @@ namespace DriverBooking.API.Services.DriverServices
             {
                 UserName = driver.UserName,
                 PhoneNumber = driver.PhoneNumber,
+                Email = driver.Email,
                 IsActive = true
             };
 
@@ -101,6 +102,7 @@ namespace DriverBooking.API.Services.DriverServices
 
             return ApiResponse<AuthenticatedResult>.CreateSuccessResponse(new AuthenticatedResult
             {
+                AccountId = appUser.Id,
                 Token = accessToken,
                 RefreshToken = refreshToken
             }, "Create Driver Successfully");

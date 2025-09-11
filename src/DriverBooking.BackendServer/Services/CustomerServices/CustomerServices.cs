@@ -29,6 +29,27 @@ namespace DriverBooking.API.Services.CustomerServices
             _tokenService = tokenService;
         }
 
+        public async Task<ApiResponse<CustomerProfileDTO>> GetCustomerProfile(Guid accountId)
+        {
+            var customer = await _unitOfWork._customerRepository.GetCustomerByAccountId(accountId);
+            if (customer == null)
+            {
+                return ApiResponse<CustomerProfileDTO>.CreateFailureResponseWithoutError("Wrong account id");
+            }
+
+            var customerDTO = new CustomerProfileDTO
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.CustomerAccount.Email,
+                UserName = customer.CustomerAccount.UserName,
+                PhoneNumber = customer.PhoneNumber,
+                ProfileAvatarUrl = customer.ProfileAvatarUrl
+            };
+            return ApiResponse<CustomerProfileDTO>.CreateSuccessResponse(customerDTO, "Successful get customer");
+        }
+
         public async Task<ApiResponse<AuthenticatedResult>> RegisterCustomer(CustomerDTO customer)
         {
             // Create user
@@ -38,6 +59,7 @@ namespace DriverBooking.API.Services.CustomerServices
             {
                 UserName = customer.UserName,
                 PhoneNumber = customer.PhoneNumber,
+                Email = customer.Email,
                 IsActive = true
             };
 
@@ -91,6 +113,7 @@ namespace DriverBooking.API.Services.CustomerServices
 
             return ApiResponse<AuthenticatedResult>.CreateSuccessResponse(new AuthenticatedResult
             {
+                AccountId = appUser.Id,
                 Token = accessToken,
                 RefreshToken = refreshToken
             }, "Create User Successfully");

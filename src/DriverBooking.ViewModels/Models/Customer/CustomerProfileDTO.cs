@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DriverBooking.Core.Models.Customer
 {
-    public class CustomerDTO
+    public class CustomerProfileDTO
     {
         public int Id { get; set; }
 
@@ -15,11 +15,6 @@ namespace DriverBooking.Core.Models.Customer
         [RegularExpression(@"^[A-Za-z][A-Za-z0-9_]*$",
         ErrorMessage = "Username must start with a letter and contain only letters, numbers, or underscores")]
         public string UserName { get; set; }
-
-        [Required(ErrorMessage = "Password is required")]
-        [MinLength(3, ErrorMessage = "Password must be at least 3 characters long")]
-        public string PassWord { get; set; }
-        [EmailAddress()]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]

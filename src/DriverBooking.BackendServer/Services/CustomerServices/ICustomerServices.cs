@@ -9,5 +9,7 @@ namespace DriverBooking.API.Services.CustomerServices
     {
         // Create customer and customer account , role with it
         Task<ApiResponse<AuthenticatedResult>> RegisterCustomer(CustomerDTO customer);
+
+        Task<ApiResponse<CustomerProfileDTO>> GetCustomerProfile(Guid accountId);
     }
 }

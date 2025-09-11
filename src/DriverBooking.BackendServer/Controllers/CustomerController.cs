@@ -2,6 +2,7 @@
 using DriverBooking.Core.Models.Auth;
 using DriverBooking.Core.Models.Common;
 using DriverBooking.Core.Models.Customer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,17 @@ namespace DriverBooking.API.Controllers
                 return BadRequest("Error customer binding");
 
             return await _customerServices.RegisterCustomer(customer);
+        }
+
+        [HttpPost("get_customer_profile")]
+        [Authorize(Roles ="Customer")]
+        public async Task<ActionResult<ApiResponse<CustomerProfileDTO>>> GetCustomerProfile([FromBody]ProfileRequest profileRequest)
+        {
+            var response = await _customerServices.GetCustomerProfile(profileRequest.AccountId);
+            if (!response.Success)
+                return BadRequest("Check again account id");
+
+            return Ok(response);
         }
     }
 }
