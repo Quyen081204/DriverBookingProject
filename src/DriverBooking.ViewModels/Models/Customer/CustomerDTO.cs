@@ -25,10 +25,7 @@ namespace DriverBooking.Core.Models.Customer
         [Required(ErrorMessage = "Phone number is required")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits")]
         public string PhoneNumber { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        // Special: file binding
-        public string ProfileAvatarUrl { get; set; }
+        public string FullName { get; set; }
+        public string? ProfileAvatarUrl { get; set; }
     }
 }

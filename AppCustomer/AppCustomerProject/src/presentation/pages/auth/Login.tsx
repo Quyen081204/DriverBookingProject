@@ -8,17 +8,12 @@ import {
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
-import { Color } from "../../../domain/models/config";
+import { CssConfig } from "../../../domain/models/config";
 import Apis, { authApis, endpoints } from "../../../data/api/clients";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getCurrentUser } from "../../redux/features/user/userSlice";
-
-interface AuthenticatedResult {
-    accountId: string,
-    token: string,
-    refreshToken: string
-}
+import { AuthenticatedResult } from "../../../domain/models/authenticatedResult";
 
 export const LoginScreen = () => {
     const navigation: any = useNavigation();
@@ -63,7 +58,7 @@ export const LoginScreen = () => {
                 console.log("logininnnnn")
                 setLoading(true);
                 let res = await Apis.post<AuthenticatedResult>(endpoints.login, { username: userName, password: password });
-                console.log(res);
+                //console.log(res);
                 if (res.status === 200) {
                     // Store token in async storage
                     const token = await AsyncStorage.setItem('token', res.data.token);
@@ -126,7 +121,7 @@ export const LoginScreen = () => {
                             <View style={styles.registerContainer}>
                                 <Text>Bạn chưa có tài khoản?</Text>
                                 <TouchableOpacity onPress={() => { navigation.navigate('register') }}>
-                                    <Text style={{ marginLeft: 8, color: Color.mainColor }}>Đăng ký ngay</Text>
+                                    <Text style={{ marginLeft: 8, color: CssConfig.mainColor }}>Đăng ký ngay</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -142,7 +137,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     main: {
-        marginHorizontal: 25,
+        paddingHorizontal: CssConfig.paddingHorizontal,
         flex: 1,
     },
     header: {
@@ -153,7 +148,8 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 25,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: CssConfig.textSuitYellow
     },
     body: {
         flex: 3,
@@ -177,7 +173,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     btnSignIn: {
-        backgroundColor: Color.mainColor,
+        backgroundColor: CssConfig.mainColor,
         height: 50,
         justifyContent: "center",
         alignItems: "center",

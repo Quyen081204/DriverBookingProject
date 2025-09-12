@@ -1,12 +1,12 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const endpoints = {
     login: '/auth/login/',
-    getCurrentUser: '/customer/get_customer_profile/' 
+    getCurrentUser: '/Customer/get_customer_profile/',
+    registerUser: '/Customer/register'
 }
 
-const host = "https://1d1ec872acb7.ngrok-free.app";
+const host = "https://968c7afa9075.ngrok-free.app";
 const BASE_URL = `${host}/api`
 
 export const authApis = (token) => {

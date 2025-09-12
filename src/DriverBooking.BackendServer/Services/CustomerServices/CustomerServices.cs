@@ -67,6 +67,10 @@ namespace DriverBooking.API.Services.CustomerServices
 
             if (!createAccountResult.Succeeded)
             {
+                foreach (var error in createAccountResult.Errors)
+                {
+                    Console.WriteLine($"{error.Code} - {error.Description}");
+                }
                 return ApiResponse<AuthenticatedResult>.CreateFailureResponseWithoutError("Something went wrong when create customer account");
             }
 
@@ -77,10 +81,15 @@ namespace DriverBooking.API.Services.CustomerServices
                 return ApiResponse<AuthenticatedResult>.CreateFailureResponseWithoutError("Can not add role to account for customer");
             }
 
+            string[] parts = customer.FullName.Trim().Split(' ');
+
+            string lastName = parts[parts.Length - 1];
+            string firstName = string.Join(" ", parts.Take(parts.Length - 1));
+
             var customerEntity = new Customer
             {
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
+                FirstName = firstName,
+                LastName = lastName,
                 PhoneNumber = customer.PhoneNumber,
                 ProfileAvatarUrl = customer.ProfileAvatarUrl,
                 CustomerAccount = appUser,

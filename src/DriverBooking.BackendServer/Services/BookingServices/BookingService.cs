@@ -251,8 +251,7 @@ namespace DriverBooking.API.Services.BookingServices
             {
                 return new DriverDTO
                 {
-                    FirstName = driver.FirstName,
-                    LastName = driver.LastName,
+                    FullName = driver.FirstName + " " + driver.LastName,
                     Id = driver.Id,
                     PhoneNumber = driver.PhoneNumber,
                     ProfileAvatarUrl = driver.ProfileAvatarUrl,

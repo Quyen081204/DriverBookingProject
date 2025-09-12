@@ -31,7 +31,10 @@ namespace DriverBooking.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Error customer binding");
 
-            return await _customerServices.RegisterCustomer(customer);
+            var response = await _customerServices.RegisterCustomer(customer);
+            if (!response.Success)
+                return BadRequest(response);
+            return Ok(response);
         }
 
         [HttpPost("get_customer_profile")]

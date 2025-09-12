@@ -65,10 +65,15 @@ namespace DriverBooking.API.Services.DriverServices
                 return ApiResponse<AuthenticatedResult>.CreateFailureResponseWithoutError("Error with vehicle of driver");
             }
 
+            string[] parts = driver.FullName.Trim().Split(' ');
+
+            string lastName = parts[parts.Length - 1];
+            string firstName = string.Join(" ", parts.Take(parts.Length - 1));
+
             var driverEntity = new Driver
             {
-                FirstName = driver.FirstName,
-                LastName = driver.LastName,
+                FirstName = firstName,
+                LastName = lastName,
                 PhoneNumber = driver.PhoneNumber,
                 ProfileAvatarUrl = driver.ProfileAvatarUrl,
                 DriverAccount = appUser,
