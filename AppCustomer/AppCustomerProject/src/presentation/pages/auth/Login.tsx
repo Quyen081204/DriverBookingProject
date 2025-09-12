@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
 import { useState } from "react";
 import {
-    View, Text, Button, StyleSheet, TextInput, Touchable, TouchableOpacity, Keyboard,
+    View, Text, StyleSheet, TextInput, TouchableOpacity, Keyboard,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
     ActivityIndicator,
@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getCurrentUser } from "../../redux/features/user/userSlice";
 import { AuthenticatedResult } from "../../../domain/models/authenticatedResult";
+import { SignalRClient } from "../../../domain/signalR/signalRClientService";
 
 export const LoginScreen = () => {
     const navigation: any = useNavigation();
@@ -66,8 +67,11 @@ export const LoginScreen = () => {
                     const accountId: string = res.data.accountId;
                     // Dispatch action to update user slice state
                     const data = dispatch(getCurrentUser({ accountId }));
-                    console.log("data current user: ", data);
-                    
+                    //console.log("data current user: ", data);
+
+                    // Init connection to signalR Hub
+                    await SignalRClient.getConnectionInstanceAsync();
+
                     navigation.replace("inapp");
                 }
             }

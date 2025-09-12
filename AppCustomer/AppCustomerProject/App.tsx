@@ -10,7 +10,7 @@ export default function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <PaperProvider>
-        <AppNavigation />
+          <AppNavigation></AppNavigation>
       </PaperProvider>
     </Provider>
   );

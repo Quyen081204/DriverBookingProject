@@ -1,10 +1,11 @@
 import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
 import userReducer from "./features/user/userSlice"
-
+//import connectionReducer from "./features/signalRConnection/connectionSlice"
 export const store = configureStore({
     reducer: {
         // user state will be updated by userReducer function when actions are dispatched
-        userState: userReducer
+        userState: userReducer,
+       // connection: connectionReducer
     }
 })
 

@@ -3,6 +3,7 @@ using DriverBooking.Core.Models.Common;
 using DriverBooking.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace DriverBooking.Core.HubConfigs
 {
@@ -18,18 +19,23 @@ namespace DriverBooking.Core.HubConfigs
         private readonly ManageCancellationToken _manageCancellationToken;
 
         private readonly ITripRepository _tripRepository;
+
+        private readonly ILogger<BookingHub> _logger;
         public BookingHub(PendingResponseClient pendingResponse, ConnectionMapping<string> connections,
-                          ManageCancellationToken manageCancellationToken, ITripRepository tripRepository)
+                          ManageCancellationToken manageCancellationToken, ITripRepository tripRepository,
+                          ILogger<BookingHub> logger)
         {
             _pendingResponse = pendingResponse;
             _connections = connections;
             _manageCancellationToken = manageCancellationToken;
             _tripRepository = tripRepository;
+            _logger = logger;
         }
 
         public async Task TestConnectedBySendMessage(string clientName, string message)
         {
-            await Clients.All.SendAsync("ReceiveConnectedMessage", $"hi {clientName}");
+            _logger.LogInformation("Client {client} send message: {message}", clientName, message); 
+            await Clients.All.SendAsync("testReceiveMsg", "Ehm this is from Server has builded the connection!");
         }
 
         // call back on server to receive message from driver 
@@ -75,6 +81,8 @@ namespace DriverBooking.Core.HubConfigs
             string username = Context.User.Identity.Name;
             // add current connectionId
             _connections.Add(username, Context.ConnectionId);
+
+            await base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)

@@ -155,11 +155,16 @@ namespace DriverBooking.BackendServer
             // Add CORS for signalR purpose
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-                    //.AllowCredentials());
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(
+                            "http://192.168.1.6:8081", // Expo Metro bundler (your LAN IP)
+                            "exp://192.168.1.6:8081"  // sometimes Expo uses exp://
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
             });
 
             // Default configure services for ASP.NET Core applications 
@@ -177,7 +182,7 @@ namespace DriverBooking.BackendServer
                 app.UseSwaggerUI();
             }
 
-            app.UseCors("CorsPolicy");
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
