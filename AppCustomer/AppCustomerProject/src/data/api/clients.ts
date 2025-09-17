@@ -6,7 +6,7 @@ export const endpoints = {
     registerUser: '/Customer/register'
 }
 
-export const host = "https://e034a1daf103.ngrok-free.app";
+export const host = "https://e68adabdf129.ngrok-free.app";
 const BASE_URL = `${host}/api`
 
 export const authApis = (token) => {

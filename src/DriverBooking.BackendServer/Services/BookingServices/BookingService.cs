@@ -68,9 +68,10 @@ namespace DriverBooking.API.Services.BookingServices
                 lon = initBookingRequest.Depart.Lon,
                 withinM = 3000,
                 vehicleCapacity = initBookingRequest.RequestVehicleCapacity,
+                vehicleType = initBookingRequest.RequestVehicleCapacity == 2 ? VehicleType.SAME :VehicleType.NORMAL
             };
 
-            var freeDrivers = await _unitOfWork._driverRepository.GetDriversWithinMetersNoVehicleTypeAsync(customerRequirements);
+            var freeDrivers = await _unitOfWork._driverRepository.GetDriversWithinMetersAsync(customerRequirements);
 
             return ApiResponse<InitBookingResponse>.CreateSuccessResponse(
                 new InitBookingResponse
@@ -122,6 +123,7 @@ namespace DriverBooking.API.Services.BookingServices
                 lon = request.Depart.Lon,
                 withinM = findWithinRadius,
                 vehicleCapacity = request.RequestVehicleCapacity,
+                vehicleType = request.RequestVehicleType
             };
             // Token source dùng để điều khiển hủy book chuyến
             var tripTokenSource = new CancellationTokenSource();
@@ -173,16 +175,13 @@ namespace DriverBooking.API.Services.BookingServices
                                         var tripDTO = new TripDTO
                                         {
                                             Id = newTrip.Id,
+                                            StartTime = (DateTime)newTrip.StartTime,  
                                             Status = newTrip.Status,
                                             Price = newTrip.Price,
                                             PaymentMethod = newTrip.PaymentMethod,
                                             CurrentLocation = new PointDTO { Lat = driver.CurrentLocation.Lat, Lon = driver.CurrentLocation.Lon },
-                                            CustomerNote = request.CustomerNote,
-                                            Dest = request.Dest,
-                                            Depart = request.Depart,
                                             DepartAddress = request.DepartAddress,
                                             DestAddress = request.DestAddress,
-                                            DistanceUnit = DistanceUnit.KM,
                                             Distance = request.Distance,
                                             Driver = await this.GetDriverDTO(driver.DriverId)
                                         };
@@ -346,8 +345,6 @@ namespace DriverBooking.API.Services.BookingServices
             double distanceInKm = distanceInMeters / 1000.0;
             return distanceInKm;
         }
-
-
     }
 }
 

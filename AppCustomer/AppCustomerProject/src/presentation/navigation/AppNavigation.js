@@ -9,7 +9,10 @@ import { HistoryScreen } from "../pages/History";
 import { InitBookingScreen } from "../pages/booking/InitBooking";
 import { ProcessBookingScreen } from "../pages/booking/ProcessBooking";
 import { TrackingScreen } from "../pages/booking/Tracking";
+import { SearchLocationScreen } from "../pages/booking/searchLocation";
 import Feather from "react-native-vector-icons/Feather";
+import GetCurrentLocationScreen from "../pages/booking/getCurrentLocation";
+import PickLocationScreen from "../pages/booking/pickLocation";
 
 
 const Stack = createNativeStackNavigator();
@@ -18,9 +21,15 @@ const Tab = createBottomTabNavigator();
 export const AppNavigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="auth" component={AuthNavigation}></Stack.Screen>
                 <Stack.Screen name="inapp" component={InAppNavigation}></Stack.Screen>
+            </Stack.Navigator> */}
+             <Stack.Navigator screenOptions={{ headerShown: false }}>
+               {/* <Stack.Screen name="searchLocation" component={SearchLocationScreen}></Stack.Screen> */}
+                {/*<Stack.Screen name="home" component={HomeScreen}></Stack.Screen>*/}
+                <Stack.Screen name="getCurrentLocationNavigation" component={GetCurrentLocationNavigation}></Stack.Screen>
+
             </Stack.Navigator>
         </NavigationContainer>
     );
@@ -65,10 +74,20 @@ const InAppNavigation = () => {
 const HomeNavigation = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="home" component={HomeScreen}></Stack.Screen>
+            <Stack.Screen name="Home" component={GetCurrentLocationNavigation}></Stack.Screen>
             <Stack.Screen name="initBooking" component={InitBookingScreen}></Stack.Screen>
             <Stack.Screen name="processBooking" component={ProcessBookingScreen}></Stack.Screen>
             <Stack.Screen name="tracking" component={TrackingScreen}></Stack.Screen>
+        </Stack.Navigator>
+    )
+}
+
+const GetCurrentLocationNavigation = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="home" component={HomeScreen}></Stack.Screen>
+            <Stack.Screen name="getCurrentLocation" component={GetCurrentLocationScreen}></Stack.Screen>
+            <Stack.Screen name="pickLocation" component={PickLocationScreen}></Stack.Screen>
         </Stack.Navigator>
     )
 }

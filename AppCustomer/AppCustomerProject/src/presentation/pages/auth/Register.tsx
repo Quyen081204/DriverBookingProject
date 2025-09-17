@@ -18,6 +18,7 @@ import { ApiResponse } from "../../../domain/models/ApiResponse";
 import { AsyncThunkAction } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "../../redux/store";
 import { useAppDispatch } from "../../redux/hooks";
+import { SignalRClient } from "../../../domain/signalR/signalRClientService";
 
 interface infoType {
     placeHolder: string,
@@ -110,6 +111,8 @@ export const RegisterScreen = () => {
                     // Dispatch action to update user slice state
                     const data = dispatch(getCurrentUser({ accountId }));
 
+                     // Init connection to signalR Hub
+                    await SignalRClient.getConnectionInstanceAsync();
                     navigation.replace("inapp");
                 }
             } catch (err) {

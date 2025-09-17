@@ -59,16 +59,18 @@ namespace DriverBooking.Core.HubConfigs
             if(tripCancled.CustomerId.ToString() == Context.User.FindFirst("profileId")?.Value)
             {
                 _manageCancellationToken.CancelToken(guid);
+                // Huy chuyen di
+                tripCancled.CancelReason = cancelReason;
+                tripCancled.RequestStatus = Domain.Entities.TripRequestStatus.CANCELED;
 
                 if (tripCancled?.DriverId != null)
                 {
-                    tripCancled.CancelReason = cancelReason;
-                    tripCancled.RequestStatus = Domain.Entities.TripRequestStatus.CANCELED;
+                    
                     var driverUsername = tripCancled.Driver.DriverAccount.UserName;
                     await Clients.Client(_connections.GetConnection(driverUsername)).SendAsync("CustomerCancelTrip");
-                    await _tripRepository.UpdateTrip(guid, tripCancled);
                 }
 
+                await _tripRepository.UpdateTrip(guid, tripCancled);
                 return ApiResponse<bool>.CreateSuccessResponse(true, "Cancel trip successfully");
             }
 

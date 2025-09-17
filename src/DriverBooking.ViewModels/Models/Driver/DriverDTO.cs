@@ -31,7 +31,7 @@ namespace DriverBooking.Core.Models.Driver
         public required string LicensePlate { get; set; }
         [JsonIgnore]
         public VehicleType? VehicleType { get; set; }
-
+        [JsonPropertyName("VehicleType")]
         public string VehicleTypValue => VehicleType.GetDescription();
     }
 }

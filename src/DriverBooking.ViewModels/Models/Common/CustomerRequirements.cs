@@ -18,6 +18,6 @@ namespace DriverBooking.Core.Models.Common
 
         public int vehicleCapacity { get; set; }
 
-        public VehicleType VehicleType { get; set; }
+        public VehicleType vehicleType { get; set; }
     }
 }

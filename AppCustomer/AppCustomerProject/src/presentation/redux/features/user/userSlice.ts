@@ -99,6 +99,7 @@ export const { userLoggedIn, userLoggedOut } = userSlice.actions;
 
 // Useful selector, selector an accept other arugment as well
 export const selectUser = (state: RootState) => state.userState.user;
+export const selectUserFullName = (state: RootState) => `${state.userState.user.firstName} ${state.userState.user.lastName}`;
 export const selectCurrentUserName = (state: RootState) => state.userState.user.userName;
 export const selectUserStatus = (state:RootState) => state.userState.status;
 export const selectUserError = (state:RootState) => state.userState.error;

@@ -29,6 +29,8 @@ namespace DriverBooking.API.Controllers
                 initBookingRequest.Depart, initBookingRequest.Dest, initBookingRequest.RequestVehicleCapacity);
 
             var response = await _bookingService.InitBookingTrip(initBookingRequest);
+            if (!response.Success)
+                return BadRequest(response);    
 
             return Ok(response);
         }

@@ -96,7 +96,6 @@ export const LoginScreen = () => {
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-
                 <SafeAreaView style={styles.container}>
                     <View style={styles.main}>
                         <View style={styles.header}>

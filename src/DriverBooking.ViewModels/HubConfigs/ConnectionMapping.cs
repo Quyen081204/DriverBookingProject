@@ -19,7 +19,8 @@ namespace DriverBooking.Core.HubConfigs
             }
         }
 
-        // Add mapping key -> hashSet of connectionId
+        // Add mapping key -> hashSet
+        // of connectionId
 
         public void Add(T key, string connectionId)
         {
